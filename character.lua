@@ -17,19 +17,12 @@ local shoots = {}
 
 
 function updateShoots()
-  local i = 1
-  local y = 1
   local shoot
   local axis
-  while shoots[i] do
-    y = 1
-    shoot = shoots[i]
-    while shoot.axis[y] do
-      axis = shoot.axis[y]
+  for i, shoot in pairs(shoots) do
+    for y, axis in pairs(shoot.axis) do
       shoot[axis.direction] = shoot[axis.direction] + axis.value
-      y = y + 1
     end
-    i = i + 1
   end
 end
 
@@ -119,10 +112,8 @@ function character.draw()
   love.graphics.scale(1.5, 1.5)
   love.graphics.draw(isaac, quad, character.POSITION.x, character.POSITION.y)
 
-  local i = 1
   love.graphics.setColor(255, 255, 255)
-  while shoots[i] do
-    love.graphics.circle("fill", shoots[i].x, shoots[i].y, 10, 100)
-    i = i + 1
+  for i, shoot in pairs(shoots) do
+    love.graphics.circle("fill", shoot.x, shoot.y, 10, 100)
   end
 end
