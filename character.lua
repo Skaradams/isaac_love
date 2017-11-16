@@ -1,7 +1,7 @@
 module('character', package.seeall)
 
 character.POSITION = {
-  x = 300,
+  x = 200,
   y = 200
 }
 
