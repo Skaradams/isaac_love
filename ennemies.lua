@@ -1,6 +1,6 @@
 module('ennemies', package.seeall)
 
-
+local utils = require('utils')
 
 -- list of availables ennemy types
 local pool = {
@@ -14,7 +14,7 @@ local spawned = {}
 
 function ennemies.spawn(type, x, y)
   if(type) then
-    local ennemy = pool[type]
+    local ennemy = utils.clone(pool[type])
     ennemy.x = x
     ennemy.y = y
     table.insert(spawned, ennemy)
@@ -33,7 +33,7 @@ function ennemies.draw()
     local width, height = ennemy.asset:getDimensions()
     local quad = love.graphics.newQuad(
       width/4,
-      height/3,
+      height/3 * 0,
       width/4,
       height/3,
       ennemy.asset:getDimensions()

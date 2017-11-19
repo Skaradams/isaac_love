@@ -109,7 +109,6 @@ function character.draw()
     isaac:getDimensions()
   )
 
-  love.graphics.scale(1.5, 1.5)
   love.graphics.draw(isaac, quad, character.POSITION.x, character.POSITION.y)
 
   love.graphics.setColor(255, 255, 255)
