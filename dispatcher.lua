@@ -3,12 +3,12 @@ module('dispatcher', package.seeall)
 local subscribers = {};
 local messages = {};
 
-state_manager.channels = {
-  'CHARACTER' = 'character'
+dispatcher.channels = {
+  CHARACTER = 'character'
 }
 
-function state_manager.addMessage(message, channel)
-  if(message && channel) then
+function dispatcher.addMessage(message, channel)
+  if(message and channel) then
     if(messages[channel] == nil) then
       messages[channel] = {}
     end
@@ -16,7 +16,7 @@ function state_manager.addMessage(message, channel)
   end
 end
 
-function state_manager.subscribe(channel, subscriber)
+function dispatcher.subscribe(channel, subscriber)
   if(subscribers[channel] == nil) then
     subscribers[channel] = {}
   end
@@ -24,7 +24,7 @@ function state_manager.subscribe(channel, subscriber)
   local exists = false
   for i, current_subscriber in pairs(subscribers[channel]) do
     -- TODO : give id to objects to identify them ?
-    if(current_subscriber === subscriber) then
+    if(current_subscriber == subscriber) then
       exists = true
     end
   end
@@ -34,7 +34,7 @@ function state_manager.subscribe(channel, subscriber)
   end
 end
 
-function state_manager.update()
+function dispatcher.update()
   -- send messages to subscribers
   for channel, channel_messages in pairs(messages) do
     for i, subscriber in pairs(subscribers[channel]) do

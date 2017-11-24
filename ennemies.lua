@@ -1,5 +1,7 @@
 module('ennemies', package.seeall)
 
+local dispatcher = require('dispatcher')
+
 local utils = require('utils')
 
 -- list of availables ennemy types
@@ -24,6 +26,7 @@ end
 function ennemies.load()
   for name, ennemy in pairs(pool) do
     ennemy.asset = love.graphics.newImage(ennemy.image)
+    dispatcher.subscribe(dispatcher.channels.CHARACTER, ennemy)
   end
 end
 

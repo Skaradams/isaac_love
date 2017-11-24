@@ -1,5 +1,6 @@
 local character = require('character')
 local ennemies = require('ennemies')
+local dispatcher = require('dispatcher')
 
 function love.keypressed(key)
   character.keypressed(key)
@@ -17,6 +18,7 @@ end
 
 function love.update(timing)
   character.update(timing)
+  dispatcher.update()
 end
 
 function love.draw()
