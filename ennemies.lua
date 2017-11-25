@@ -1,4 +1,4 @@
-module('ennemies', package.seeall)
+local ennemies = {}
 
 local dispatcher = require('dispatcher')
 
@@ -45,3 +45,5 @@ function ennemies.draw()
     love.graphics.draw(ennemy.asset, quad, ennemy.x, ennemy.y)
   end
 end
+
+return ennemies

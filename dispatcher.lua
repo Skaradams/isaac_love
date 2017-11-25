@@ -1,4 +1,4 @@
-module('dispatcher', package.seeall)
+local dispatcher = {}
 
 local subscribers = {};
 local messages = {};
@@ -44,3 +44,5 @@ function dispatcher.update()
   -- reset messages
   messages = {};
 end
+
+return dispatcher

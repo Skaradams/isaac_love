@@ -1,4 +1,4 @@
-module('character', package.seeall)
+local character = {}
 
 character.POSITION = {
   x = 200,
@@ -116,3 +116,5 @@ function character.draw()
     love.graphics.circle("fill", shoot.x, shoot.y, 10, 100)
   end
 end
+
+return character

@@ -1,4 +1,4 @@
-module('utils', package.seeall)
+local utils = {}
 
 function utils.clone(t)
   if type(t) ~= "table" then return t end
@@ -14,3 +14,5 @@ function utils.clone(t)
     setmetatable(target, meta)
     return target
 end
+
+return utils
