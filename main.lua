@@ -1,29 +1,30 @@
-local character = require('character')
-local ennemies = require('ennemies')
+local Character = require('Character')
+local Ennemy = require('Ennemy')
 local dispatcher = require('dispatcher')
 
 function love.keypressed(key)
-  character.keypressed(key)
+  character:keypressed(key)
 end
 
 
 function love.load()
   room = love.graphics.newImage("room.png")
-  character.load()
-  ennemies.load()
-  ennemies.spawn('wizoob', 350, 180)
-  ennemies.spawn('wizoob', 150, 80)
-  ennemies.spawn('wizoob', 15, 200)
+  character = Character:new()
+  wizoob1 = Ennemy:new('wizoob', 350, 180)
+  wizoob2 = Ennemy:new('wizoob', 150, 80)
+  wizoob3 = Ennemy:new('wizoob', 15, 200)
 end
 
 function love.update(timing)
-  character.update(timing)
+  character:update(timing)
   dispatcher.update()
 end
 
 function love.draw()
   love.graphics.draw(room, 0, 0)
   love.graphics.scale(1.5, 1.5)
-  character.draw()
-  ennemies.draw()
+  character:draw()
+  wizoob1:draw()
+  wizoob2:draw()
+  wizoob3:draw()
 end

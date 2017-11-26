@@ -1,56 +1,64 @@
-local character = {}
+local class = require('lib.middleclass')
 
-character.POSITION = {
-  x = 200,
-  y = 200
-}
+local Character = class('Character')
 
-local direction = 'stand'
-local canShoot = true
-local spriteState = {
-  y = 1,
-  x = 2
-}
-local direction = 'stand'
-local canShoot = true
-local shoots = {}
+function Character:initialize(position)
+  local default = {
+    x = 200,
+    y = 200
+  }
+  if(not position) then
+    position = default
+  else
+    if(not position.x) then
+      position.x = default.x
+    end
+    if(not position.y) then
+      position.y = default.y
+    end
+  end
 
+  self.position = position
+  self.direction = 'stand'
+  self.canShoot = true
+  self.spriteState = {
+    y = 1,
+    x = 2
+  }
+  self.animationTimer = 0
+  self.shoots = {}
+  self.spritesheet = love.graphics.newImage("isaac_spritesheet.png")
+end
 
-function updateShoots()
+function Character:updateShoots()
   local shoot
   local axis
-  for i, shoot in pairs(shoots) do
+  for i, shoot in pairs(self.shoots) do
     for y, axis in pairs(shoot.axis) do
       shoot[axis.direction] = shoot[axis.direction] + axis.value
     end
   end
 end
 
-function move(direction)
+function Character:move()
   local step = 2;
   if love.keyboard.isDown("up") then
-    spriteState.y = 4
-    character.POSITION.y = character.POSITION.y - step;
+    self.spriteState.y = 4
+    self.position.y = self.position.y - step;
   elseif love.keyboard.isDown("down") then
-    spriteState.y = 1
-    character.POSITION.y = character.POSITION.y + step;
+    self.spriteState.y = 1
+    self.position.y = self.position.y + step;
   end
   if love.keyboard.isDown("left") then
-    spriteState.y = 2
-    character.POSITION.x = character.POSITION.x - step;
+    self.spriteState.y = 2
+    self.position.x = self.position.x - step;
   elseif love.keyboard.isDown("right") then
-    spriteState.y = 3
-    character.POSITION.x = character.POSITION.x + step;
+    self.spriteState.y = 3
+    self.position.x = self.position.x + step;
   end
 end
 
-
--- Lifecycle callbacks
-function character.load()
-  isaac = love.graphics.newImage("isaac_spritesheet.png")
-end
-
-function character.keypressed(key)
+function Character:keypressed(key)
   local axis = {};
   local step = 8;
 
@@ -77,44 +85,48 @@ function character.keypressed(key)
     })
   end
   if table.getn(axis) > 0 then
-    table.insert(shoots, {
-      x = character.POSITION.x + 50,
-      y = character.POSITION.y + 50,
+    print('insert shoot')
+    table.insert(self.shoots, {
+      x = self.position.x + 50,
+      y = self.position.y + 50,
       axis = axis
     })
   end
 end
 
-local animationTimer = 0
-function character.update(timing)
-  animationTimer = animationTimer + timing
-  if(animationTimer > 0.2) then
-    spriteState.x = spriteState.x + 1
-    if(spriteState.x > 3) then
-      spriteState.x = 1
+function Character:update(timing)
+  self.animationTimer = self.animationTimer + timing
+  if(self.animationTimer > 0.2) then
+    self.spriteState.x = self.spriteState.x + 1
+    if(self.spriteState.x > 3) then
+      self.spriteState.x = 1
     end
-    animationTimer = 0
+    self.animationTimer = 0
   end
-  move()
-  updateShoots()
+  self:move()
+  self:updateShoots()
 end
 
-function character.draw()
-  local width, height = isaac:getDimensions()
-  local quad = love.graphics.newQuad(
-    width/3 * (spriteState.x - 1),
-    height/4 * (spriteState.y - 1),
+function Character:draw()
+  local width, height = self.spritesheet:getDimensions()
+  self.spritequad = love.graphics.newQuad(
+    width/3 * (self.spriteState.x - 1),
+    height/4 * (self.spriteState.y - 1),
     width/3,
     height/4,
-    isaac:getDimensions()
+    self.spritesheet:getDimensions()
+  )
+  love.graphics.draw(
+    self.spritesheet,
+    self.spritequad,
+    self.position.x,
+    self.position.y
   )
 
-  love.graphics.draw(isaac, quad, character.POSITION.x, character.POSITION.y)
-
   love.graphics.setColor(255, 255, 255)
-  for i, shoot in pairs(shoots) do
+  for i, shoot in pairs(self.shoots) do
     love.graphics.circle("fill", shoot.x, shoot.y, 10, 100)
   end
 end
 
-return character
+return Character
