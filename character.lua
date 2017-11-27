@@ -43,27 +43,34 @@ end
 
 function Character:move()
   local step = 2;
+  local didMove = false
   if love.keyboard.isDown("up") then
+    didMove = true
     self.spriteState.y = 4
     self.position.y = self.position.y - step;
   elseif love.keyboard.isDown("down") then
+    didMove = true
     self.spriteState.y = 1
     self.position.y = self.position.y + step;
   end
   if love.keyboard.isDown("left") then
+    didMove = true
     self.spriteState.y = 2
     self.position.x = self.position.x - step;
   elseif love.keyboard.isDown("right") then
+    didMove = true
     self.spriteState.y = 3
     self.position.x = self.position.x + step;
   end
-  dispatcher.addMessage(
+  if(didMove) then
+    dispatcher.addMessage(
     {
       type = 'position',
       data = self.position
     },
     dispatcher.channels.CHARACTER
   )
+  end
 end
 
 function Character:keypressed(key)

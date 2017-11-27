@@ -17,6 +17,7 @@ end
 
 function love.update(timing)
   character:update(timing)
+  wizoob1:update(timing)
   dispatcher.update()
 end
 
