@@ -1,4 +1,5 @@
 local class = require('lib.middleclass')
+local dispatcher = require('dispatcher')
 
 local Character = class('Character')
 
@@ -56,6 +57,13 @@ function Character:move()
     self.spriteState.y = 3
     self.position.x = self.position.x + step;
   end
+  dispatcher.addMessage(
+    {
+      type = 'position',
+      data = self.position
+    },
+    dispatcher.channels.CHARACTER
+  )
 end
 
 function Character:keypressed(key)
@@ -85,7 +93,6 @@ function Character:keypressed(key)
     })
   end
   if table.getn(axis) > 0 then
-    print('insert shoot')
     table.insert(self.shoots, {
       x = self.position.x + 50,
       y = self.position.y + 50,

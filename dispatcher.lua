@@ -1,3 +1,4 @@
+local inspect = require('lib.inspect')
 local dispatcher = {}
 
 local subscribers = {};
@@ -16,6 +17,7 @@ function dispatcher.addMessage(message, channel)
   end
 end
 
+-- Subscriber should be an instance of middleclass
 function dispatcher.subscribe(channel, subscriber)
   if(subscribers[channel] == nil) then
     subscribers[channel] = {}
@@ -29,16 +31,17 @@ function dispatcher.subscribe(channel, subscriber)
     end
   end
 
-  if(exists) then
+  if(not exists) then
     table.insert(subscribers[channel], subscriber)
   end
 end
 
 function dispatcher.update()
   -- send messages to subscribers
+  -- print(inspect(subscribers))
   for channel, channel_messages in pairs(messages) do
     for i, subscriber in pairs(subscribers[channel]) do
-      subscriber.inbox(channel_messages)
+      subscriber:inbox(channel_messages)
     end
   end
   -- reset messages

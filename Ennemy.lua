@@ -1,3 +1,4 @@
+local inspect = require('lib.inspect')
 local dispatcher = require('dispatcher')
 local utils = require('utils')
 local class = require('lib.middleclass')
@@ -12,7 +13,6 @@ Ennemy.static.pool = {
 }
 
 function Ennemy.initialize(self, type, x, y)
-  print(type)
   local poolType = utils.clone(Ennemy.static.pool[type])
   self.spritesheet = love.graphics.newImage(poolType.image)
   self.position = {
@@ -20,6 +20,17 @@ function Ennemy.initialize(self, type, x, y)
     y = y
   }
   dispatcher.subscribe(dispatcher.channels.CHARACTER, self)
+end
+
+function Ennemy:inbox(messages)
+  for i, message in pairs(messages) do
+    if(message.data.x == self.position.x) then
+      print 'same column'
+    end
+    if(message.data.y == self.position.y) then
+      print 'same line'
+    end
+  end
 end
 
 function Ennemy:draw()
