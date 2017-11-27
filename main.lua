@@ -11,13 +11,15 @@ function love.load()
   room = love.graphics.newImage("room.png")
   character = Character:new()
   wizoob1 = Ennemy:new('wizoob', 350, 180)
-  -- wizoob2 = Ennemy:new('wizoob', 150, 80)
-  -- wizoob3 = Ennemy:new('wizoob', 15, 200)
+  wizoob2 = Ennemy:new('wizoob', 150, 80)
+  wizoob3 = Ennemy:new('wizoob', 15, 200)
 end
 
 function love.update(timing)
   character:update(timing)
   wizoob1:update(timing)
+  wizoob2:update(timing)
+  wizoob3:update(timing)
   dispatcher.update()
 end
 
@@ -26,6 +28,6 @@ function love.draw()
   love.graphics.scale(1.5, 1.5)
   character:draw()
   wizoob1:draw()
-  -- wizoob2:draw()
-  -- wizoob3:draw()
+  wizoob2:draw()
+  wizoob3:draw()
 end

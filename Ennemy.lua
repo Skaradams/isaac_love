@@ -26,13 +26,16 @@ end
 -- direction = x or y
 -- value = 1 or -1
 function Ennemy:shoot(direction, value)
-  print(inspect(self.position))
+  print(direction, value)
+  local step = 8;
   table.insert(self.shoots, {
-    x = self.position.x + 50,
-    y = self.position.y + 50,
+    x = self.position.x + 20,
+    y = self.position.y + 20,
     axis = {
-      direction = direction,
-      value = value
+      {
+        direction = direction,
+        value = value * step
+      }
     }
   })
 
@@ -41,8 +44,8 @@ end
 function Ennemy:updateShoots()
   local shoot
   local axis
-  print(inspect(self.shoots))
   for i, shoot in pairs(self.shoots) do
+    print(inspect(shoot))
     for y, axis in pairs(shoot.axis) do
       shoot[axis.direction] = shoot[axis.direction] + axis.value
     end
@@ -52,10 +55,9 @@ end
 function Ennemy:inbox(messages)
   local direction
   local value
-
   for i, message in pairs(messages) do
     if(message.data.x == self.position.x) then
-      direction = 'x'
+      direction = 'y'
       if(message.data.y <= self.position.y) then
         value = -1
       else
@@ -63,15 +65,17 @@ function Ennemy:inbox(messages)
       end
     end
     if(message.data.y == self.position.y) then
-      direction = 'y'
+      direction = 'x'
       if(message.data.x <= self.position.x) then
         value = -1
       else
         value = 1
       end
     end
+    if(direction) then
+      self:shoot(direction, value)
+    end
   end
-  self:shoot(direction, value)
 end
 
 function Ennemy:update()

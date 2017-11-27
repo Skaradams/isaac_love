@@ -1,3 +1,4 @@
+local inspect = require('lib.inspect')
 local class = require('lib.middleclass')
 local dispatcher = require('dispatcher')
 
@@ -35,6 +36,7 @@ function Character:updateShoots()
   local shoot
   local axis
   for i, shoot in pairs(self.shoots) do
+    print(inspect(shoot))
     for y, axis in pairs(shoot.axis) do
       shoot[axis.direction] = shoot[axis.direction] + axis.value
     end
