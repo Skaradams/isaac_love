@@ -1,6 +1,7 @@
 local inspect = require('lib.inspect')
 local class = require('lib.middleclass')
 local dispatcher = require('dispatcher')
+local Shoot = require('Shoot')
 
 local Character = class('Character')
 
@@ -36,15 +37,12 @@ function Character:updateShoots()
   local shoot
   local axis
   for i, shoot in pairs(self.shoots) do
-    print(inspect(shoot))
-    for y, axis in pairs(shoot.axis) do
-      shoot[axis.direction] = shoot[axis.direction] + axis.value
-    end
+    shoot:update()
   end
 end
 
 function Character:move()
-  local step = 2;
+  local step = 2
   local didMove = false
   if love.keyboard.isDown("up") then
     didMove = true
@@ -66,47 +64,42 @@ function Character:move()
   end
   if(didMove) then
     dispatcher.addMessage(
-    {
-      type = 'position',
-      data = self.position
-    },
-    dispatcher.channels.CHARACTER
-  )
+      {
+        type = 'position',
+        data = self.position
+      },
+      dispatcher.channels.CHARACTER
+    )
   end
 end
 
 function Character:keypressed(key)
-  local axis = {};
+  local speed = {}
+  local createShoot = false
   local step = 8;
 
   if key == "z"  then
-    table.insert(axis, {
-      direction = "y",
-      value = -step;
-    })
+    speed.y = -step
+    createShoot = true
   elseif key == "s" then
-    table.insert(axis, {
-      direction = "y",
-      value = step;
-    })
+    speed.y = step
+    createShoot = true
   end
   if key == "q" then
-    table.insert(axis, {
-      direction = "x",
-      value = -step;
-    })
+    speed.x = -step
+    createShoot = true
   elseif key == "d" then
-    table.insert(axis, {
-      direction = "x",
-      value = step;
-    })
+    speed.x = step
+    createShoot = true
   end
-  if table.getn(axis) > 0 then
-    table.insert(self.shoots, {
-      x = self.position.x + 50,
-      y = self.position.y + 50,
-      axis = axis
-    })
+  if createShoot then
+    local newShoot = Shoot:new(
+      self.position.x + 50,
+      self.position.y + 50,
+      self
+    )
+    newShoot:setSpeed(speed.x, speed.y)
+    table.insert(self.shoots, newShoot)
   end
 end
 
@@ -141,7 +134,8 @@ function Character:draw()
 
   love.graphics.setColor(255, 255, 255)
   for i, shoot in pairs(self.shoots) do
-    love.graphics.circle("fill", shoot.x, shoot.y, 10, 100)
+    print(i)
+    shoot:draw()
   end
 end
 

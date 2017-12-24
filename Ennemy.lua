@@ -2,6 +2,7 @@ local inspect = require('lib.inspect')
 local dispatcher = require('dispatcher')
 local utils = require('utils')
 local class = require('lib.middleclass')
+local Shoot = require('Shoot')
 
 local Ennemy = class('Ennemy')
 
@@ -26,29 +27,23 @@ end
 -- direction = x or y
 -- value = 1 or -1
 function Ennemy:shoot(direction, value)
-  print(direction, value)
   local step = 8;
-  table.insert(self.shoots, {
-    x = self.position.x + 20,
-    y = self.position.y + 20,
-    axis = {
-      {
-        direction = direction,
-        value = value * step
-      }
-    }
-  })
-
+  local newShoot = Shoot:new(
+    self.position.x + 20,
+    self.position.y + 20,
+    self
+  )
+  local speed = {}
+  speed[direction] = value * step
+  newShoot:setSpeed(speed.x, speed.y)
+  table.insert(self.shoots, newShoot)
 end
 
 function Ennemy:updateShoots()
   local shoot
   local axis
   for i, shoot in pairs(self.shoots) do
-    print(inspect(shoot))
-    for y, axis in pairs(shoot.axis) do
-      shoot[axis.direction] = shoot[axis.direction] + axis.value
-    end
+    shoot:update()
   end
 end
 
@@ -100,7 +95,8 @@ function Ennemy:draw()
   )
   love.graphics.setColor(255, 255, 255)
   for i, shoot in pairs(self.shoots) do
-    love.graphics.circle("fill", shoot.x, shoot.y, 10, 100)
+    print(i)
+    shoot:draw()
   end
 end
 
