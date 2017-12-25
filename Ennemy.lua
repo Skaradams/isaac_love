@@ -2,7 +2,7 @@ local inspect = require('lib.inspect')
 local dispatcher = require('dispatcher')
 local utils = require('utils')
 local class = require('lib.middleclass')
-local Shoot = require('Shoot')
+local ShootGenerator = require('ShootGenerator')
 
 local Ennemy = class('Ennemy')
 
@@ -28,15 +28,18 @@ end
 -- value = 1 or -1
 function Ennemy:shoot(direction, value)
   local step = 8;
-  local newShoot = Shoot:new(
+
+  local newShoot = ShootGenerator:createShoot(
     self.position.x + 20,
     self.position.y + 20,
-    self
+    self.shoots[#self.shoots]
   )
-  local speed = {}
-  speed[direction] = value * step
-  newShoot:setSpeed(speed.x, speed.y)
-  table.insert(self.shoots, newShoot)
+  if newShoot then
+    local speed = {}
+    speed[direction] = value * step
+    newShoot:setSpeed(speed.x, speed.y)
+    table.insert(self.shoots, newShoot)
+  end
 end
 
 function Ennemy:updateShoots()
