@@ -1,7 +1,7 @@
 local inspect = require('lib.inspect')
 local class = require('lib.middleclass')
 local dispatcher = require('dispatcher')
-local Shoot = require('Shoot')
+local ShootGenerator = require('ShootGenerator')
 
 local Character = class('Character')
 
@@ -93,13 +93,15 @@ function Character:keypressed(key)
     createShoot = true
   end
   if createShoot then
-    local newShoot = Shoot:new(
+    local newShoot = ShootGenerator:createShoot(
       self.position.x + 50,
       self.position.y + 50,
-      self
+      self.shoots[#self.shoots]
     )
-    newShoot:setSpeed(speed.x, speed.y)
-    table.insert(self.shoots, newShoot)
+    if newShoot then
+      newShoot:setSpeed(speed.x, speed.y)
+      table.insert(self.shoots, newShoot)
+    end
   end
 end
 
@@ -134,7 +136,6 @@ function Character:draw()
 
   love.graphics.setColor(255, 255, 255)
   for i, shoot in pairs(self.shoots) do
-    print(i)
     shoot:draw()
   end
 end

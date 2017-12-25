@@ -4,8 +4,8 @@ local class = require('lib.middleclass')
 
 local Shoot = class('Shoot')
 
-function Shoot:initialize(x, y, owner)
-  self.owner = owner
+function Shoot:initialize(x, y)
+  self.createdAt = love.timer.getTime()
   self.position = {
     x = x,
     y = y

@@ -95,7 +95,6 @@ function Ennemy:draw()
   )
   love.graphics.setColor(255, 255, 255)
   for i, shoot in pairs(self.shoots) do
-    print(i)
     shoot:draw()
   end
 end
