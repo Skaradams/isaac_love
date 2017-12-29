@@ -73,22 +73,25 @@ function Character:move()
   end
 end
 
-function Character:keypressed(key)
+function Character:keypressed()
+end
+
+function Character:shoot()
   local speed = {}
   local createShoot = false
   local step = 8;
-
-  if key == "z"  then
+  print(inspect(self))
+  if love.keyboard.isDown("z")  then
     speed.y = -step
     createShoot = true
-  elseif key == "s" then
+  elseif love.keyboard.isDown("s") then
     speed.y = step
     createShoot = true
   end
-  if key == "q" then
+  if love.keyboard.isDown("q") then
     speed.x = -step
     createShoot = true
-  elseif key == "d" then
+  elseif love.keyboard.isDown("d") then
     speed.x = step
     createShoot = true
   end
@@ -115,6 +118,7 @@ function Character:update(timing)
     self.animationTimer = 0
   end
   self:move()
+  self:shoot()
   self:updateShoots()
 end
 

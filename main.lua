@@ -1,6 +1,7 @@
 local Character = require('Character')
 local Ennemy = require('Ennemy')
 local dispatcher = require('dispatcher')
+local room, character, wizoob1, wizoob2, wizoob3
 
 function love.keypressed(key)
   character:keypressed(key)
