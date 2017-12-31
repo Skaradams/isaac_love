@@ -31,6 +31,9 @@ function Character:initialize(position)
   self.animationTimer = 0
   self.shoots = {}
   self.spritesheet = love.graphics.newImage("isaac_spritesheet.png")
+  self.lifeMax = 5
+  self.life = 5
+  dispatcher.subscribe(dispatcher.channels.ENNEMY_SHOOTS, self)
 end
 
 function Character:updateShoots()
@@ -80,7 +83,6 @@ function Character:shoot()
   local speed = {}
   local createShoot = false
   local step = 8;
-  print(inspect(self))
   if love.keyboard.isDown("z")  then
     speed.y = -step
     createShoot = true
@@ -99,7 +101,8 @@ function Character:shoot()
     local newShoot = ShootGenerator:createShoot(
       self.position.x + 50,
       self.position.y + 50,
-      self.shoots[#self.shoots]
+      self.shoots[#self.shoots],
+      dispatcher.channels.CHARACTER_SHOOTS
     )
     if newShoot then
       newShoot:setSpeed(speed.x, speed.y)
@@ -120,6 +123,23 @@ function Character:update(timing)
   self:move()
   self:shoot()
   self:updateShoots()
+end
+
+function Character:inbox(messages, channel)
+  if channel == dispatcher.channels.ENNEMY_SHOOTS then
+    for i, message in pairs(messages) do
+      local shoot = message.data.shoot
+      local offset = 50
+      -- print(inspect(self.position), inspect(shoot.position))
+      -- print('-----------------------')
+      if(
+        shoot.position.x > self.position.x and shoot.position.x < self.position.x + offset
+        and shoot.position.y > self.position.y and shoot.position.y < self.position.y + offset
+      ) then
+        print('touchay')
+      end
+    end
+  end
 end
 
 function Character:draw()

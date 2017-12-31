@@ -5,7 +5,9 @@ local subscribers = {};
 local messages = {};
 
 dispatcher.channels = {
-  CHARACTER = 'character'
+  CHARACTER = 'character',
+  ENNEMY_SHOOTS = 'ennemy_shoots',
+  CHARACTER_SHOOTS = 'character_shoots'
 }
 
 function dispatcher.addMessage(message, channel)
@@ -41,7 +43,7 @@ function dispatcher.update()
   -- print(inspect(subscribers))
   for channel, channel_messages in pairs(messages) do
     for i, subscriber in pairs(subscribers[channel]) do
-      subscriber:inbox(channel_messages)
+      subscriber:inbox(channel_messages, channel)
     end
   end
   -- reset messages

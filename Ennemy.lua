@@ -32,7 +32,8 @@ function Ennemy:shoot(direction, value)
   local newShoot = ShootGenerator:createShoot(
     self.position.x + 20,
     self.position.y + 20,
-    self.shoots[#self.shoots]
+    self.shoots[#self.shoots],
+    dispatcher.channels.ENNEMY_SHOOTS
   )
   if newShoot then
     local speed = {}

@@ -4,7 +4,7 @@ local class = require('lib.middleclass')
 
 local Shoot = class('Shoot')
 
-function Shoot:initialize(x, y)
+function Shoot:initialize(x, y, dispatcherChannel)
   self.createdAt = love.timer.getTime()
   self.position = {
     x = x,
@@ -12,6 +12,7 @@ function Shoot:initialize(x, y)
   }
   self.axis = axis
   self.direction = direction
+  self.dispatcherChannel = dispatcherChannel
 end
 
 function Shoot:setSpeed(speedX, speedY)
@@ -30,6 +31,14 @@ end
 function Shoot:update()
   self.position.x = self.position.x + self.speed.x
   self.position.y = self.position.y + self.speed.y
+  dispatcher.addMessage(
+    {
+      data = {
+        shoot = self
+      }
+    },
+    self.dispatcherChannel
+  )
 end
 
 function Shoot:draw()
