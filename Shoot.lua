@@ -1,8 +1,10 @@
 local inspect = require('lib.inspect')
 local dispatcher = require('dispatcher')
 local class = require('lib.middleclass')
+local getWorld = require('World')
 
 local Shoot = class('Shoot')
+local world = getWorld()
 
 function Shoot:initialize(x, y, dispatcherChannel)
   self.createdAt = love.timer.getTime()
@@ -13,6 +15,7 @@ function Shoot:initialize(x, y, dispatcherChannel)
   self.axis = axis
   self.direction = direction
   self.dispatcherChannel = dispatcherChannel
+  world:add(self, self.position.x, self.position.y, 10, 10)
 end
 
 function Shoot:setSpeed(speedX, speedY)

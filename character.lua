@@ -2,8 +2,10 @@ local inspect = require('lib.inspect')
 local class = require('lib.middleclass')
 local dispatcher = require('dispatcher')
 local ShootGenerator = require('ShootGenerator')
+local getWorld = require('World')
 
 local Character = class('Character')
+local world = getWorld()
 
 function Character:initialize(position)
   local default = {
@@ -34,6 +36,7 @@ function Character:initialize(position)
   self.lifeMax = 5
   self.life = 5
   dispatcher.subscribe(dispatcher.channels.ENNEMY_SHOOTS, self)
+  world:add(self, self.position.x, self.position.y, 50, 50)
 end
 
 function Character:updateShoots()
