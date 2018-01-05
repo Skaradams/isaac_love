@@ -8,14 +8,11 @@ local world = getWorld()
 
 function Shoot:initialize(x, y, dispatcherChannel)
   self.createdAt = love.timer.getTime()
-  self.position = {
-    x = x,
-    y = y
-  }
+
   self.axis = axis
   self.direction = direction
   self.dispatcherChannel = dispatcherChannel
-  world:add(self, self.position.x, self.position.y, 5, 5)
+  world:add(self, x, y, 5, 5)
 end
 
 function Shoot:setSpeed(speedX, speedY)
@@ -32,9 +29,8 @@ function Shoot:setSpeed(speedX, speedY)
 end
 
 function Shoot:update()
-  local newX, newY, collisions, collisionsCount = world:move(self, self.position.x + self.speed.x, self.position.y + self.speed.y)
-  self.position.x = newX
-  self.position.y = newY
+  local positionX, positionY, width, height = world:getRect(self)
+  local newX, newY, collisions, collisionsCount = world:move(self, positionX + self.speed.x, positionY + self.speed.y)
   dispatcher.addMessage(
     {
       data = {
@@ -46,7 +42,8 @@ function Shoot:update()
 end
 
 function Shoot:draw()
-  love.graphics.circle("fill", self.position.x, self.position.y, 10, 100)
+  local positionX, positionY, width, height = world:getRect(self)
+  love.graphics.circle("fill", positionX, positionY, 5, 100)
 end
 
 return Shoot
