@@ -23,7 +23,6 @@ function Character:initialize(position)
     end
   end
 
-  self.position = position
   self.direction = 'stand'
   self.canShoot = true
   self.spriteState = {
@@ -36,7 +35,8 @@ function Character:initialize(position)
   self.lifeMax = 5
   self.life = 5
   dispatcher.subscribe(dispatcher.channels.ENNEMY_SHOOTS, self)
-  world:add(self, self.position.x - 80, self.position.y - 30, 70, 70)
+
+  world:add(self, position.x, position.y, 70, 70)
 end
 
 function Character:updateShoots()
@@ -48,11 +48,12 @@ function Character:updateShoots()
 end
 
 function Character:move()
+  local positionX, positionY, width, height = world:getRect(self)
   local step = 2
   local didMove = false
   local newPosition = {
-    x = self.position.x,
-    y = self.position.y
+    x = positionX,
+    y = positionY
   }
   if love.keyboard.isDown("up") then
     didMove = true
@@ -73,8 +74,6 @@ function Character:move()
     newPosition.x = newPosition.x + step;
   end
   if(didMove) then
-    self.position.x = newPosition.x
-    self.position.y = newPosition.y
     local newX, newY, collisions, collisionsCount = world:move(self, newPosition.x, newPosition.y)
     if(collisionsCount > 0) then
       print("touchay")
@@ -112,9 +111,10 @@ function Character:shoot()
     createShoot = true
   end
   if createShoot then
+    local positionX, positionY, width, height = world:getRect(self)
     local newShoot = ShootGenerator:createShoot(
-      self.position.x + 50,
-      self.position.y + 50,
+      positionX + 50,
+      positionY + 50,
       self.shoots[#self.shoots],
       dispatcher.channels.CHARACTER_SHOOTS
     )
@@ -140,20 +140,7 @@ function Character:update(timing)
 end
 
 function Character:inbox(messages, channel)
-  if channel == dispatcher.channels.ENNEMY_SHOOTS then
-    for i, message in pairs(messages) do
-      local shoot = message.data.shoot
-      local offset = 50
-      -- print(inspect(self.position), inspect(shoot.position))
-      -- print('-----------------------')
-      if(
-        shoot.position.x > self.position.x and shoot.position.x < self.position.x + offset
-        and shoot.position.y > self.position.y and shoot.position.y < self.position.y + offset
-      ) then
-
-      end
-    end
-  end
+  
 end
 
 function Character:draw()
@@ -165,11 +152,12 @@ function Character:draw()
     height/4,
     self.spritesheet:getDimensions()
   )
+  local positionX, positionY, rectWidth, rectHeight = world:getRect(self)
   love.graphics.draw(
     self.spritesheet,
     self.spritequad,
-    self.position.x,
-    self.position.y
+    positionX,
+    positionY
   )
 
   love.graphics.setColor(255, 255, 255)
