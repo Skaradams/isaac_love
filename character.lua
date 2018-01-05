@@ -36,7 +36,7 @@ function Character:initialize(position)
   self.lifeMax = 5
   self.life = 5
   dispatcher.subscribe(dispatcher.channels.ENNEMY_SHOOTS, self)
-  world:add(self, self.position.x, self.position.y, 50, 50)
+  world:add(self, self.position.x - 80, self.position.y - 30, 70, 70)
 end
 
 function Character:updateShoots()
@@ -50,29 +50,40 @@ end
 function Character:move()
   local step = 2
   local didMove = false
+  local newPosition = {
+    x = self.position.x,
+    y = self.position.y
+  }
   if love.keyboard.isDown("up") then
     didMove = true
     self.spriteState.y = 4
-    self.position.y = self.position.y - step;
+    newPosition.y = newPosition.y - step;
   elseif love.keyboard.isDown("down") then
     didMove = true
     self.spriteState.y = 1
-    self.position.y = self.position.y + step;
+    newPosition.y = newPosition.y + step;
   end
   if love.keyboard.isDown("left") then
     didMove = true
     self.spriteState.y = 2
-    self.position.x = self.position.x - step;
+    newPosition.x = newPosition.x - step;
   elseif love.keyboard.isDown("right") then
     didMove = true
     self.spriteState.y = 3
-    self.position.x = self.position.x + step;
+    newPosition.x = newPosition.x + step;
   end
   if(didMove) then
+    self.position.x = newPosition.x
+    self.position.y = newPosition.y
+    local newX, newY, collisions, collisionsCount = world:move(self, newPosition.x, newPosition.y)
+    if(collisionsCount > 0) then
+      print("touchay")
+    end
+
     dispatcher.addMessage(
       {
         type = 'position',
-        data = self.position
+        data = newPosition
       },
       dispatcher.channels.CHARACTER
     )
@@ -139,7 +150,7 @@ function Character:inbox(messages, channel)
         shoot.position.x > self.position.x and shoot.position.x < self.position.x + offset
         and shoot.position.y > self.position.y and shoot.position.y < self.position.y + offset
       ) then
-        print('touchay')
+
       end
     end
   end

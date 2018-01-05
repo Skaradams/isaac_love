@@ -8,7 +8,6 @@ function love.keypressed(key)
   character:keypressed(key)
 end
 
-
 function love.load()
   room = love.graphics.newImage("room.png")
   character = Character:new()

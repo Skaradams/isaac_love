@@ -15,7 +15,7 @@ function Shoot:initialize(x, y, dispatcherChannel)
   self.axis = axis
   self.direction = direction
   self.dispatcherChannel = dispatcherChannel
-  world:add(self, self.position.x, self.position.y, 10, 10)
+  world:add(self, self.position.x, self.position.y, 5, 5)
 end
 
 function Shoot:setSpeed(speedX, speedY)
@@ -32,8 +32,9 @@ function Shoot:setSpeed(speedX, speedY)
 end
 
 function Shoot:update()
-  self.position.x = self.position.x + self.speed.x
-  self.position.y = self.position.y + self.speed.y
+  local newX, newY, collisions, collisionsCount = world:move(self, self.position.x + self.speed.x, self.position.y + self.speed.y)
+  self.position.x = newX
+  self.position.y = newY
   dispatcher.addMessage(
     {
       data = {

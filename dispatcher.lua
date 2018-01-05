@@ -10,6 +10,11 @@ dispatcher.channels = {
   CHARACTER_SHOOTS = 'character_shoots'
 }
 
+-- Init subscribers
+for i, channel in pairs(dispatcher.channels) do
+  subscribers[channel] = {}
+end
+
 function dispatcher.addMessage(message, channel)
   if(message and channel) then
     if(messages[channel] == nil) then
@@ -27,7 +32,6 @@ function dispatcher.subscribe(channel, subscriber)
 
   local exists = false
   for i, current_subscriber in pairs(subscribers[channel]) do
-    -- TODO : give id to objects to identify them ?
     if(current_subscriber == subscriber) then
       exists = true
     end
@@ -40,7 +44,6 @@ end
 
 function dispatcher.update()
   -- send messages to subscribers
-  -- print(inspect(subscribers))
   for channel, channel_messages in pairs(messages) do
     for i, subscriber in pairs(subscribers[channel]) do
       subscriber:inbox(channel_messages, channel)
