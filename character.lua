@@ -137,10 +137,23 @@ function Character:update(timing)
   self:move()
   self:shoot()
   self:updateShoots()
+  self:checkCollisions()
+end
+
+function Character:checkCollisions()
+  local x, y, collisions, collisionsCount = world:check(self)
+  if collisionsCount > 0 then
+    for i, collision in pairs(collisions) do
+      if collision.other.class.name == "Shoot" then
+        collision.other:destroy()
+        self.life = self.life - 1
+      end
+    end
+  end
 end
 
 function Character:inbox(messages, channel)
-  
+
 end
 
 function Character:draw()
@@ -164,6 +177,7 @@ function Character:draw()
   for i, shoot in pairs(self.shoots) do
     shoot:draw()
   end
+  love.graphics.print(self.life, 10, 10)
 end
 
 return Character

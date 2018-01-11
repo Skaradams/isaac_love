@@ -3,8 +3,10 @@ local dispatcher = require('dispatcher')
 local utils = require('utils')
 local class = require('lib.middleclass')
 local ShootGenerator = require('ShootGenerator')
+local getWorld = require('World')
 
 local Ennemy = class('Ennemy')
+local world = getWorld()
 
 -- list of availables ennemy types
 Ennemy.static.pool = {
@@ -46,9 +48,14 @@ end
 function Ennemy:updateShoots()
   local shoot
   local axis
+  local newShoots = {}
   for i, shoot in pairs(self.shoots) do
-    shoot:update()
+    if world:hasItem(shoot) then
+      table.insert(newShoots, shoot)
+      shoot:update()
+    end
   end
+  self.shoots = newShoots
 end
 
 function Ennemy:inbox(messages)

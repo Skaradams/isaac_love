@@ -29,21 +29,30 @@ function Shoot:setSpeed(speedX, speedY)
 end
 
 function Shoot:update()
-  local positionX, positionY, width, height = world:getRect(self)
-  local newX, newY, collisions, collisionsCount = world:move(self, positionX + self.speed.x, positionY + self.speed.y)
-  dispatcher.addMessage(
-    {
-      data = {
-        shoot = self
-      }
-    },
-    self.dispatcherChannel
-  )
+  if world:hasItem(self) then
+    local positionX, positionY, width, height = world:getRect(self)
+    local newX, newY, collisions, collisionsCount = world:update(self, positionX + self.speed.x, positionY + self.speed.y)
+    dispatcher.addMessage(
+      {
+        data = {
+          shoot = self
+        }
+      },
+      self.dispatcherChannel
+    )
+  end
+end
+
+function Shoot:destroy()
+
+  world:remove(self)
 end
 
 function Shoot:draw()
-  local positionX, positionY, width, height = world:getRect(self)
-  love.graphics.circle("fill", positionX, positionY, 5, 100)
+  if world:hasItem(self) then
+    local positionX, positionY, width, height = world:getRect(self)
+    love.graphics.circle("fill", positionX, positionY, 5, 100)
+  end
 end
 
 return Shoot
