@@ -31,15 +31,21 @@ end
 function Shoot:update()
   if world:hasItem(self) then
     local positionX, positionY, width, height = world:getRect(self)
-    local newX, newY, collisions, collisionsCount = world:update(self, positionX + self.speed.x, positionY + self.speed.y)
-    dispatcher.addMessage(
-      {
-        data = {
-          shoot = self
-        }
-      },
-      self.dispatcherChannel
-    )
+    local goalX, goalY = positionX + self.speed.x, positionY + self.speed.y
+    local actualX, actualY = world:check(self, goalX, goalY)
+    if(actualX == goalX and actualY == goalY) then
+      local newX, newY, collisions, collisionsCount = world:update(self, positionX + self.speed.x, positionY + self.speed.y)
+      dispatcher.addMessage(
+        {
+          data = {
+            shoot = self
+          }
+        },
+        self.dispatcherChannel
+      )
+    else
+      self:destroy()
+    end
   end
 end
 

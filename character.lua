@@ -76,7 +76,7 @@ function Character:move()
   if(didMove) then
     local newX, newY, collisions, collisionsCount = world:move(self, newPosition.x, newPosition.y)
     if(collisionsCount > 0) then
-      print("touchay")
+
     end
 
     dispatcher.addMessage(
