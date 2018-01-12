@@ -49,6 +49,10 @@ function Shoot:update()
   end
 end
 
+function Shoot:collide()
+  self:destroy()
+end
+
 function Shoot:destroy()
 
   world:remove(self)

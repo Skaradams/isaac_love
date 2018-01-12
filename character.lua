@@ -75,14 +75,14 @@ function Character:move()
   end
   if(didMove) then
     local newX, newY, collisions, collisionsCount = world:move(self, newPosition.x, newPosition.y)
-    if(collisionsCount > 0) then
-
-    end
 
     dispatcher.addMessage(
       {
         type = 'position',
-        data = newPosition
+        data = {
+          x = newX,
+          y = newY
+        }
       },
       dispatcher.channels.CHARACTER
     )
@@ -134,10 +134,10 @@ function Character:update(timing)
     end
     self.animationTimer = 0
   end
+  self:checkCollisions()
   self:move()
   self:shoot()
   self:updateShoots()
-  self:checkCollisions()
 end
 
 function Character:checkCollisions()
@@ -145,7 +145,7 @@ function Character:checkCollisions()
   if collisionsCount > 0 then
     for i, collision in pairs(collisions) do
       if collision.other.class.name == "Shoot" then
-        collision.other:destroy()
+        collision.other:collide(self)
         self.life = self.life - 1
       end
     end
