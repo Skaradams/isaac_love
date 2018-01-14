@@ -32,9 +32,9 @@ function Shoot:update()
   if world:hasItem(self) then
     local positionX, positionY, width, height = world:getRect(self)
     local goalX, goalY = positionX + self.speed.x, positionY + self.speed.y
-    local actualX, actualY = world:check(self, goalX, goalY)
-    if(actualX == goalX and actualY == goalY) then
-      local newX, newY, collisions, collisionsCount = world:update(self, positionX + self.speed.x, positionY + self.speed.y)
+    local actualX, actualY, collisions, collisionsCount = world:check(self, goalX, goalY)
+    if(collisionsCount <= 0) then
+      local newX, newY = world:update(self, positionX + self.speed.x, positionY + self.speed.y)
       dispatcher.addMessage(
         {
           data = {
@@ -44,7 +44,10 @@ function Shoot:update()
         self.dispatcherChannel
       )
     else
-      self:destroy()
+      for i, collision in pairs(collisions) do
+        collision.other:collide(self)
+        self:collide(collision.other)
+      end
     end
   end
 end

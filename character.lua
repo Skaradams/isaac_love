@@ -146,9 +146,15 @@ function Character:checkCollisions()
     for i, collision in pairs(collisions) do
       if collision.other.class.name == "Shoot" then
         collision.other:collide(self)
-        self.life = self.life - 1
+        self:collide(collision.other)
       end
     end
+  end
+end
+
+function Character:collide(other)
+  if other.class.name == "Shoot" then
+    self.life = self.life - 1
   end
 end
 
