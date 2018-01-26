@@ -31,12 +31,26 @@ function Character:initialize(position)
   }
   self.animationTimer = 0
   self.shoots = {}
-  self.spritesheet = love.graphics.newImage("isaac_spritesheet.png")
+  self.spritesheet = love.graphics.newImage("dragon_sheet.png")
+  self.frameCount = 12
   self.lifeMax = 5
   self.life = 5
   dispatcher.subscribe(dispatcher.channels.ENNEMY_SHOOTS, self)
+  local width, height = self.spritesheet:getDimensions()
+  width = width/self.frameCount
+  local offsetX, offsetY = math.floor(width*20/100), math.floor(height*20/100)
 
-  world:add(self, position.x, position.y, 70, 70)
+  self.spriteOffset = {
+    x = offsetX,
+    y = offsetY
+  }
+  world:add(
+    self,
+    position.x + offsetX,
+    position.y + offsetY,
+    width - 2 * offsetX,
+    height - 2 * offsetY
+  )
 end
 
 function Character:updateShoots()
@@ -127,9 +141,9 @@ end
 
 function Character:update(timing)
   self.animationTimer = self.animationTimer + timing
-  if(self.animationTimer > 0.2) then
+  if(self.animationTimer > 0.08) then
     self.spriteState.x = self.spriteState.x + 1
-    if(self.spriteState.x > 3) then
+    if(self.spriteState.x > 12) then
       self.spriteState.x = 1
     end
     self.animationTimer = 0
@@ -165,20 +179,24 @@ end
 function Character:draw()
   local width, height = self.spritesheet:getDimensions()
   self.spritequad = love.graphics.newQuad(
-    width/3 * (self.spriteState.x - 1),
-    height/4 * (self.spriteState.y - 1),
-    width/3,
-    height/4,
+    width/self.frameCount * (self.spriteState.x - 1),
+    0,
+    width/self.frameCount,
+    height,
     self.spritesheet:getDimensions()
   )
   local positionX, positionY, rectWidth, rectHeight = world:getRect(self)
+
   love.graphics.draw(
     self.spritesheet,
     self.spritequad,
-    positionX,
-    positionY
+    positionX - self.spriteOffset.x,
+    positionY - self.spriteOffset.y
   )
-
+  -- love.graphics.rectangle(
+  --   "fill",
+  --   positionX, positionY, rectWidth, rectHeight
+  -- )
   love.graphics.setColor(255, 255, 255)
   for i, shoot in pairs(self.shoots) do
     shoot:draw()
