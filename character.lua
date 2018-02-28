@@ -3,6 +3,8 @@ local class = require('lib.middleclass')
 local dispatcher = require('dispatcher')
 local ShootGenerator = require('ShootGenerator')
 local getWorld = require('World')
+local Animation = require('Animation')
+
 
 local Character = class('Character')
 local world = getWorld()
@@ -23,23 +25,21 @@ function Character:initialize(position)
     end
   end
 
-  self.direction = 'stand'
   self.canShoot = true
-  self.spriteState = {
-    y = 1,
-    x = 2
-  }
-  self.animationTimer = 0
   self.shoots = {}
-  self.spritesheet = love.graphics.newImage("dragon_sheet.png")
-  self.frameCount = 12
+
   self.lifeMax = 5
   self.life = 5
-  dispatcher.subscribe(dispatcher.channels.ENNEMY_SHOOTS, self)
-  local width, height = self.spritesheet:getDimensions()
-  width = width/self.frameCount
-  local offsetX, offsetY = math.floor(width*20/100), math.floor(height*20/100)
 
+  self.animations = {
+    walk = Animation:new('character', 'walk', Animation.DIRECTIONS.LEFT)
+  }
+
+  dispatcher.subscribe(dispatcher.channels.ENNEMY_SHOOTS, self)
+  local width, height = self.animations.walk:getQuadDimensions()
+
+  -- Compute hitbox dimensions as a percentage of sprite dimensions
+  local offsetX, offsetY = math.floor(width*20/100), math.floor(height*20/100)
   self.spriteOffset = {
     x = offsetX,
     y = offsetY
@@ -71,20 +71,20 @@ function Character:move()
   }
   if love.keyboard.isDown("up") then
     didMove = true
-    self.spriteState.y = 4
+    self.animations.walk:setDirection(Animation.DIRECTIONS.UP)
     newPosition.y = newPosition.y - step;
   elseif love.keyboard.isDown("down") then
     didMove = true
-    self.spriteState.y = 1
+    self.animations.walk:setDirection(Animation.DIRECTIONS.DOWN)
     newPosition.y = newPosition.y + step;
   end
   if love.keyboard.isDown("left") then
     didMove = true
-    self.spriteState.y = 2
+    self.animations.walk:setDirection(Animation.DIRECTIONS.LEFT)
     newPosition.x = newPosition.x - step;
   elseif love.keyboard.isDown("right") then
     didMove = true
-    self.spriteState.y = 3
+    self.animations.walk:setDirection(Animation.DIRECTIONS.RIGHT)
     newPosition.x = newPosition.x + step;
   end
   if(didMove) then
@@ -140,13 +140,8 @@ function Character:shoot()
 end
 
 function Character:update(timing)
-  self.animationTimer = self.animationTimer + timing
-  if(self.animationTimer > 0.08) then
-    self.spriteState.x = self.spriteState.x + 1
-    if(self.spriteState.x > 12) then
-      self.spriteState.x = 1
-    end
-    self.animationTimer = 0
+  for i, animation in pairs(self.animations) do
+    animation:update(timing)
   end
   self:checkCollisions()
   self:move()
@@ -177,19 +172,11 @@ function Character:inbox(messages, channel)
 end
 
 function Character:draw()
-  local width, height = self.spritesheet:getDimensions()
-  self.spritequad = love.graphics.newQuad(
-    width/self.frameCount * (self.spriteState.x - 1),
-    0,
-    width/self.frameCount,
-    height,
-    self.spritesheet:getDimensions()
-  )
   local positionX, positionY, rectWidth, rectHeight = world:getRect(self)
-
+  local sprite, quad = self.animations.walk:getFrame()
   love.graphics.draw(
-    self.spritesheet,
-    self.spritequad,
+    sprite,
+    quad,
     positionX - self.spriteOffset.x,
     positionY - self.spriteOffset.y
   )
@@ -197,6 +184,7 @@ function Character:draw()
   --   "fill",
   --   positionX, positionY, rectWidth, rectHeight
   -- )
+
   love.graphics.setColor(255, 255, 255)
   for i, shoot in pairs(self.shoots) do
     shoot:draw()
