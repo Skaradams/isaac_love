@@ -17,6 +17,8 @@ function love.load()
 end
 
 function love.update(timing)
+  -- We'll use miliseconds everywhere
+  timing = timing * 1000
   character:update(timing)
   wizoob1:update(timing)
   wizoob2:update(timing)

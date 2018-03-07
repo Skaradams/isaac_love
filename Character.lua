@@ -110,25 +110,30 @@ function Character:shoot()
   local speed = {}
   local createShoot = false
   local step = 8;
+  local direction;
   if love.keyboard.isDown("z")  then
     speed.y = -step
     createShoot = true
+    direction = 'up'
   elseif love.keyboard.isDown("s") then
     speed.y = step
     createShoot = true
-  end
-  if love.keyboard.isDown("q") then
+    direction = 'down'
+  elseif love.keyboard.isDown("q") then
     speed.x = -step
     createShoot = true
+    direction = 'left'
   elseif love.keyboard.isDown("d") then
     speed.x = step
     createShoot = true
+    direction = 'right'
   end
   if createShoot then
     local positionX, positionY, width, height = world:getRect(self)
+    local shootX, shootY = self:getShootPosition(direction)
     local newShoot = ShootGenerator:createShoot(
-      positionX + 50,
-      positionY + 50,
+      shootX,
+      shootY,
       self.shoots[#self.shoots],
       dispatcher.channels.CHARACTER_SHOOTS
     )
@@ -136,6 +141,25 @@ function Character:shoot()
       newShoot:setSpeed(speed.x, speed.y)
       table.insert(self.shoots, newShoot)
     end
+  end
+end
+
+function Character:getShootPosition(direction)
+  local positionX, positionY, width, height = world:getRect(self)
+  local shootOffset = 10
+
+  if direction == 'up' then
+    return positionX + width/2,
+      positionY - self.spriteOffset.y - shootOffset
+  elseif direction == 'down' then
+    return positionX + width/2,
+      positionY + height + self.spriteOffset.y + shootOffset
+  elseif direction == 'left' then
+    return positionX - self.spriteOffset.x - shootOffset,
+      positionY - self.spriteOffset.y + shootOffset
+  elseif direction == "right" then
+    return positionX + width + self.spriteOffset.x + shootOffset,
+      positionY - self.spriteOffset.y + shootOffset
   end
 end
 
@@ -180,12 +204,12 @@ function Character:draw()
     positionX - self.spriteOffset.x,
     positionY - self.spriteOffset.y
   )
-  -- love.graphics.rectangle(
-  --   "fill",
-  --   positionX, positionY, rectWidth, rectHeight
-  -- )
-
   love.graphics.setColor(255, 255, 255)
+  love.graphics.rectangle(
+    "fill",
+    positionX, positionY, rectWidth, rectHeight
+  )
+
   for i, shoot in pairs(self.shoots) do
     shoot:draw()
   end

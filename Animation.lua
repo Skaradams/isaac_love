@@ -45,9 +45,9 @@ end
 
 function Animation:update(timeDelta)
   self.lastTimer = self.lastTimer + timeDelta
-  print(self.lastTimer)
+
   -- Loop through frames
-  if self.lastTimer > self.config[self.name].frame_duration/1000 then
+  if self.lastTimer > self.config[self.name].frame_duration then
     self.currentFrame = self.currentFrame + 1
     if self.currentFrame >= self.config[self.name].frame_count then
       self.currentFrame = 1

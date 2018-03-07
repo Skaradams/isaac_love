@@ -4,12 +4,12 @@ local Shoot = require('Shoot')
 
 local ShootGenerator = class('ShootGenerator')
 
-local minTimeDelta = 0.4
+local minTimeDelta = 0.3
 
 
 local function canShoot(shoot)
   local now = love.timer.getTime()
-  
+
   return shoot.createdAt == nil or (now - shoot.createdAt) >= minTimeDelta
 end
 
