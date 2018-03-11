@@ -3,10 +3,9 @@ local dispatcher = require('dispatcher')
 local utils = require('utils')
 local class = require('lib.middleclass')
 local ShootGenerator = require('ShootGenerator')
-local getWorld = require('World')
+local Hitbox = require('Hitbox')
 
 local Ennemy = class('Ennemy')
-local world = getWorld()
 
 -- list of availables ennemy types
 Ennemy.static.pool = {
@@ -22,7 +21,9 @@ function Ennemy:initialize(type, x, y)
     x = x,
     y = y
   }
+  self.life = 3
   self.shoots = {}
+  self.hitbox = Hitbox:new(self, x, y, 30, 30)
   dispatcher.subscribe(dispatcher.channels.CHARACTER, self)
 end
 
@@ -50,10 +51,8 @@ function Ennemy:updateShoots()
   local axis
   local newShoots = {}
   for i, shoot in pairs(self.shoots) do
-    if world:hasItem(shoot) then
-      table.insert(newShoots, shoot)
-      shoot:update()
-    end
+    table.insert(newShoots, shoot)
+    shoot:update()
   end
   self.shoots = newShoots
 end
@@ -86,6 +85,11 @@ end
 
 function Ennemy:update()
   self:updateShoots()
+  self.hitbox:checkCollisions()
+end
+
+function Ennemy:collide()
+  self.life = self.life - 1
 end
 
 function Ennemy:draw()
@@ -97,13 +101,14 @@ function Ennemy:draw()
     height/3,
     self.spritesheet:getDimensions()
   )
-
-  love.graphics.draw(
-    self.spritesheet,
-    self.spritequad,
-    self.position.x,
-    self.position.y
-  )
+  if self.life > 0 then
+    love.graphics.draw(
+      self.spritesheet,
+      self.spritequad,
+      self.position.x,
+      self.position.y
+    )
+  end
   love.graphics.setColor(255, 255, 255)
   for i, shoot in pairs(self.shoots) do
     shoot:draw()

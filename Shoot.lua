@@ -1,10 +1,9 @@
 local inspect = require('lib.inspect')
 local dispatcher = require('dispatcher')
 local class = require('lib.middleclass')
-local getWorld = require('World')
+local Hitbox = require('Hitbox')
 
 local Shoot = class('Shoot')
-local world = getWorld()
 
 function Shoot:initialize(x, y, dispatcherChannel)
   self.createdAt = love.timer.getTime()
@@ -12,7 +11,7 @@ function Shoot:initialize(x, y, dispatcherChannel)
   self.axis = axis
   self.direction = direction
   self.dispatcherChannel = dispatcherChannel
-  world:add(self, x, y, 5, 5)
+  self.hitbox = Hitbox:new(self, x, y, 5, 5)
 end
 
 function Shoot:setSpeed(speedX, speedY)
@@ -29,12 +28,9 @@ function Shoot:setSpeed(speedX, speedY)
 end
 
 function Shoot:update()
-  if world:hasItem(self) then
-    local positionX, positionY, width, height = world:getRect(self)
-    local goalX, goalY = positionX + self.speed.x, positionY + self.speed.y
-    local actualX, actualY, collisions, collisionsCount = world:check(self, goalX, goalY)
-    if(collisionsCount <= 0) then
-      local newX, newY = world:update(self, positionX + self.speed.x, positionY + self.speed.y)
+  local positionX, positionY, width, height = self.hitbox:getRect(self)
+  if positionX and positionY then
+      local newX, newY = self.hitbox:move(positionX + self.speed.x, positionY + self.speed.y)
       dispatcher.addMessage(
         {
           data = {
@@ -43,13 +39,8 @@ function Shoot:update()
         },
         self.dispatcherChannel
       )
-    else
-      for i, collision in pairs(collisions) do
-        collision.other:collide(self)
-        self:collide(collision.other)
-      end
     end
-  end
+  -- end
 end
 
 function Shoot:collide()
@@ -57,13 +48,13 @@ function Shoot:collide()
 end
 
 function Shoot:destroy()
-
-  world:remove(self)
+  self.hitbox:remove()
 end
 
 function Shoot:draw()
-  if world:hasItem(self) then
-    local positionX, positionY, width, height = world:getRect(self)
+  -- todo : remove myself from table of shoots (to be destroyed by garbage collector)
+  local positionX, positionY, width, height = self.hitbox:getRect(self)
+  if positionX and positionY then
     love.graphics.circle("fill", positionX, positionY, 5, 100)
   end
 end

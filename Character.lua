@@ -2,12 +2,10 @@ local inspect = require('lib.inspect')
 local class = require('lib.middleclass')
 local dispatcher = require('dispatcher')
 local ShootGenerator = require('ShootGenerator')
-local getWorld = require('World')
+local Hitbox = require('Hitbox')
 local Animation = require('Animation')
 
-
 local Character = class('Character')
-local world = getWorld()
 
 function Character:initialize(position)
   local default = {
@@ -44,7 +42,7 @@ function Character:initialize(position)
     x = offsetX,
     y = offsetY
   }
-  world:add(
+  self.hitbox = Hitbox:new(
     self,
     position.x + offsetX,
     position.y + offsetY,
@@ -62,7 +60,7 @@ function Character:updateShoots()
 end
 
 function Character:move()
-  local positionX, positionY, width, height = world:getRect(self)
+  local positionX, positionY, width, height = self.hitbox:getRect(self)
   local step = 2
   local didMove = false
   local newPosition = {
@@ -88,7 +86,7 @@ function Character:move()
     newPosition.x = newPosition.x + step;
   end
   if(didMove) then
-    local newX, newY, collisions, collisionsCount = world:move(self, newPosition.x, newPosition.y)
+    local newX, newY = self.hitbox:move(newPosition.x, newPosition.y)
 
     dispatcher.addMessage(
       {
@@ -129,7 +127,7 @@ function Character:shoot()
     direction = 'right'
   end
   if createShoot then
-    local positionX, positionY, width, height = world:getRect(self)
+    local positionX, positionY, width, height = self.hitbox:getRect(self)
     local shootX, shootY = self:getShootPosition(direction)
     local newShoot = ShootGenerator:createShoot(
       shootX,
@@ -145,7 +143,7 @@ function Character:shoot()
 end
 
 function Character:getShootPosition(direction)
-  local positionX, positionY, width, height = world:getRect(self)
+  local positionX, positionY, width, height = self.hitbox:getRect(self)
   local shootOffset = 10
 
   if direction == 'up' then
@@ -167,36 +165,24 @@ function Character:update(timing)
   for i, animation in pairs(self.animations) do
     animation:update(timing)
   end
-  self:checkCollisions()
+  self.hitbox:checkCollisions()
   self:move()
   self:shoot()
   self:updateShoots()
 end
 
-function Character:checkCollisions()
-  local x, y, collisions, collisionsCount = world:check(self)
-  if collisionsCount > 0 then
-    for i, collision in pairs(collisions) do
-      if collision.other.class.name == "Shoot" then
-        collision.other:collide(self)
-        self:collide(collision.other)
-      end
-    end
-  end
-end
 
 function Character:collide(other)
-  if other.class.name == "Shoot" then
+
     self.life = self.life - 1
-  end
+
 end
 
 function Character:inbox(messages, channel)
-
 end
 
 function Character:draw()
-  local positionX, positionY, rectWidth, rectHeight = world:getRect(self)
+  local positionX, positionY, rectWidth, rectHeight = self.hitbox:getRect(self)
   local sprite, quad = self.animations.walk:getFrame()
   love.graphics.draw(
     sprite,
