@@ -1,3 +1,4 @@
+local camera = require('Camera')
 local Character = require('Character')
 local Ennemy = require('Ennemy')
 local dispatcher = require('dispatcher')
