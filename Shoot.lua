@@ -11,7 +11,7 @@ function Shoot:initialize(x, y, dispatcherChannel)
   self.axis = axis
   self.direction = direction
   self.dispatcherChannel = dispatcherChannel
-  self.hitbox = Hitbox:new(self, x, y, 5, 5)
+  self.hitbox = Hitbox:new(self, x, y, 5, 5, Hitbox.COLLISIONS.CROSS)
 end
 
 function Shoot:setSpeed(speedX, speedY)

@@ -5,7 +5,27 @@ local getWorld = require('World')
 local Hitbox = class('Hitbox')
 local world = getWorld()
 
-function Hitbox:initialize(owner, positionX, positionY, width, height)
+Hitbox.COLLISIONS = {
+  SLIDE = 'slide',
+  CROSS = 'cross',
+  TOUCH = 'touch',
+  BOUNCE = 'bounce'
+}
+
+-- Check which collision to resolve based on both objects
+local function filterCollisions(item, other)
+  if item.collision == Hitbox.COLLISIONS.CROSS or other.collision == Hitbox.COLLISIONS.CROSS then
+    return Hitbox.COLLISIONS.CROSS
+  else
+    return Hitbox.COLLISIONS.SLIDE
+  end
+end
+
+function Hitbox:initialize(owner, positionX, positionY, width, height, collision)
+  self.collision = Hitbox.COLLISIONS.SLIDE
+  if collision then
+    self.collision = collision
+  end
   self.owner = owner
   world:add(
     self,
@@ -24,7 +44,7 @@ end
 
 function Hitbox:move(positionX, positionY)
   if world:hasItem(self) then
-    local newX, newY, collisions, collisionsCount = world:move(self, positionX, positionY)
+    local newX, newY, collisions, collisionsCount = world:move(self, positionX, positionY, filterCollisions)
     self:collide(collisions, collisionsCount)
     return newX, newY
   end
