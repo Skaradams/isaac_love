@@ -7,32 +7,34 @@ local getWorld = require('World')
 local Room = class('Room')
 local world = getWorld()
 
-local character, wizoob1, wizoob2, wizoob3
-
-function Room:initialize(changeRoom)
+-- TODO : Create a hitbox zone (cross) to trigger the room change
+function Room:initialize(data, changeRoom)
   self.changeRoom = changeRoom
-  character = Character:new()
-  wizoob1 = Ennemy:new('wizoob', 350, 180)
-  wizoob2 = Ennemy:new('wizoob', 150, 80)
-  wizoob3 = Ennemy:new('wizoob', 15, 200)
+  self.character = Character:new()
+  self.ennemies = {}
+  if 'ennemies' in data then
+    for i, ennemy in pairs(data.ennemies) do
+      table.insert(self.ennemies, Ennemy:new(unpack(ennemy))
+    end
+  end
 end
 
 function Room:keypressed(key)
-  character:keypressed(key)
+  self.character:keypressed(key)
 end
 
 function Room:update(timing)
-  character:update(timing)
-  wizoob1:update(timing)
-  wizoob2:update(timing)
-  wizoob3:update(timing)
+  self.character:update(timing)
+  for i, ennemy in pairs(self.ennemies) do
+    ennemy:update(timing)
+  end
 end
 
 function Room:draw()
-  character:draw()
-  wizoob1:draw()
-  wizoob2:draw()
-  wizoob3:draw()
+  self.character:draw()
+  for i, ennemy in pairs(self.ennemies) do
+    ennemy:draw()
+  end
 end
 
 return Room

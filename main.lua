@@ -9,6 +9,13 @@ function changeRoom(room)
 end
 
 function love.load()
+  local roomData = {
+    ennemies = {
+      {'wizoob', 350, 180},
+      {'wizoob', 150, 80},
+      {'wizoob', 15, 200}
+    }
+  }
   room = Room:new(changeRoom)
 end
 
