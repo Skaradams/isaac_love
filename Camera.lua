@@ -3,8 +3,11 @@ local Camera = class('Camera')
 local globalCamera
 
 function Camera:initialize(x, y)
-  love.graphics.scale(1.5, 1.5)
   love.graphics.translate(x, y)
+end
+
+function Camera:scale()
+  love.graphics.scale(1.5, 1.5)
 end
 
 function Camera:setPosition(x, y)

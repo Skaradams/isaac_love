@@ -173,9 +173,9 @@ end
 
 
 function Character:collide(other)
-
+  if other.class == 'Shoot' then
     self.life = self.life - 1
-
+  end
 end
 
 function Character:inbox(messages, channel)

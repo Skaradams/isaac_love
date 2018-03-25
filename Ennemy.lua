@@ -92,6 +92,10 @@ function Ennemy:collide()
   self.life = self.life - 1
 end
 
+function Ennemy:remove()
+  self.hitbox:remove()
+end
+
 function Ennemy:draw()
   local width, height = self.spritesheet:getDimensions()
   self.spritequad = love.graphics.newQuad(

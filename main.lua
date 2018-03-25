@@ -4,8 +4,16 @@ local dispatcher = require('dispatcher')
 
 local room
 
-function changeRoom(room)
-  room = room
+
+
+function changeRoom(newRoom)
+  camera:scale()
+  local roomData = {
+    ennemies = {
+      {'wizoob', 40, 40}
+    }
+  }
+  room = Room:new(roomData, function() print('change room 2') end, {65,43,21}, 2)
 end
 
 function love.load()
@@ -16,7 +24,7 @@ function love.load()
       {'wizoob', 15, 200}
     }
   }
-  room = Room:new(changeRoom)
+  room = Room:new(roomData, changeRoom, {12,34,56}, 1)
 end
 
 function love.keypressed(key)
