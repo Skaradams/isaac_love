@@ -190,11 +190,11 @@ function Character:draw()
     positionX - self.spriteOffset.x,
     positionY - self.spriteOffset.y
   )
-  love.graphics.setColor(255, 255, 255)
-  love.graphics.rectangle(
-    "fill",
-    positionX, positionY, rectWidth, rectHeight
-  )
+  -- love.graphics.setColor(255, 255, 255)
+  -- love.graphics.rectangle(
+  --   "fill",
+  --   positionX, positionY, rectWidth, rectHeight
+  -- )
 
   for i, shoot in pairs(self.shoots) do
     shoot:draw()

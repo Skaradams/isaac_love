@@ -48,7 +48,7 @@ function Room:draw()
   end
 
   positionX, positionY, rectWidth, rectHeight = self.door:getRect()
-  love.graphics.setColor(78, 35, 123)
+  -- love.graphics.setColor(78, 35, 123)
   love.graphics.rectangle(
     "fill",
     positionX, positionY, rectWidth, rectHeight
