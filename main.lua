@@ -12,7 +12,10 @@ function changeRoom(newRoom)
     ennemies = {
       {'wizoob', 40, 40}
     },
-    position = {- love.graphics.getHeight(), 0}
+    position = {
+      x = 0,
+      y = - love.graphics.getHeight()
+    }
   }
 
 
@@ -27,7 +30,10 @@ function love.load()
       {'wizoob', 150, 80},
       {'wizoob', 15, 200}
     },
-    position = {0, 0}
+    position = {
+      x = 0,
+      y = 0
+    }
   }
   room = Room:new(roomData, changeRoom, {12,34,56}, 1)
 end

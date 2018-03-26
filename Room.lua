@@ -12,13 +12,13 @@ local world = getWorld()
 function Room:initialize(data, changeRoom, color)
   self.backgroundColor = color
   self.changeRoom = changeRoom
-  self.character = Character:new({x = love.graphics.getWidth() / 2 + data.position[2], y = love.graphics.getHeight() + data.position[1]})
+  self.character = Character:new({x = love.graphics.getWidth() / 2 + data.position.x, y = love.graphics.getHeight() + data.position.y})
   self.ennemies = {}
   self.position = data.position
   if data.ennemies then
     for i, ennemy in pairs(data.ennemies) do
-      table.insert(ennemy, self.position[1])
-      table.insert(ennemy, self.position[2])
+      table.insert(ennemy, self.position.x)
+      table.insert(ennemy, self.position.y)
       table.insert(self.ennemies, Ennemy:new(unpack(ennemy)))
     end
   end

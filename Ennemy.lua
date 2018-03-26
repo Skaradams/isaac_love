@@ -15,6 +15,7 @@ Ennemy.static.pool = {
 }
 
 function Ennemy:initialize(type, x, y, offsetX, offsetY)
+  print(offsetX)
   local poolType = utils.clone(Ennemy.static.pool[type])
   self.spritesheet = love.graphics.newImage(poolType.image)
   self.position = {
