@@ -12,20 +12,24 @@ local world = getWorld()
 function Room:initialize(data, changeRoom, color)
   self.backgroundColor = color
   self.changeRoom = changeRoom
-  self.character = Character:new({love.graphics.getWidth() / 2, love.graphics.getHeight()})
+  self.character = Character:new({x = love.graphics.getWidth() / 2 + data.position[2], y = love.graphics.getHeight() + data.position[1]})
   self.ennemies = {}
+  self.position = data.position
   if data.ennemies then
     for i, ennemy in pairs(data.ennemies) do
+      table.insert(ennemy, self.position[1])
+      table.insert(ennemy, self.position[2])
       table.insert(self.ennemies, Ennemy:new(unpack(ennemy)))
     end
   end
-  self.door = Hitbox:new(self, love.graphics.getWidth() / 2, 0, 20, 20, Hitbox.COLLISIONS.CROSS)
+  self.door = Hitbox:new(self, (love.graphics.getWidth() / 2) - 10, 0, 20, 20, Hitbox.COLLISIONS.CROSS)
 end
 
 function Room:collide()
   for i, ennemy in pairs(self.ennemies) do
     ennemy:remove()
   end
+  self.door:remove()
   self.changeRoom()
 end
 
@@ -47,12 +51,15 @@ function Room:draw()
     ennemy:draw()
   end
 
+
   positionX, positionY, rectWidth, rectHeight = self.door:getRect()
   -- love.graphics.setColor(78, 35, 123)
-  love.graphics.rectangle(
-    "fill",
-    positionX, positionY, rectWidth, rectHeight
-  )
+  if positionX then
+    love.graphics.rectangle(
+      "fill",
+      positionX, positionY, rectWidth, rectHeight
+    )
+  end
 end
 
 return Room

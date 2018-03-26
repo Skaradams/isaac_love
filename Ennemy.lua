@@ -14,12 +14,12 @@ Ennemy.static.pool = {
   }
 }
 
-function Ennemy:initialize(type, x, y)
+function Ennemy:initialize(type, x, y, offsetX, offsetY)
   local poolType = utils.clone(Ennemy.static.pool[type])
   self.spritesheet = love.graphics.newImage(poolType.image)
   self.position = {
-    x = x,
-    y = y
+    x = x + offsetX,
+    y = y + offsetY
   }
   self.life = 3
   self.shoots = {}
