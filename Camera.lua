@@ -27,16 +27,25 @@ function Camera:setPosition(x, y)
 end
 
 function Camera:update()
+  local step = 4
+  if math.abs(self.position.x - self.nextPosition.x) == step then
+    self.position.x = self.nextPosition.x
+  end
+
+  if math.abs(self.position.y - self.nextPosition.y) == step then
+    self.position.y = self.nextPosition.y
+  end
+
   if self.position.x > self.nextPosition.x then
-    self.position.x = self.position.x - 1
+    self.position.x = self.position.x - step
   else
-    self.position.x = self.position.x + 1
+    self.position.x = self.position.x + step
   end
 
   if self.position.y > self.nextPosition.y then
-    self.position.y = self.position.y - 1
+    self.position.y = self.position.y - step
   else
-    self.position.y = self.position.y + 1
+    self.position.y = self.position.y + step
   end
 end
 
