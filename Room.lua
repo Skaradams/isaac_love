@@ -45,7 +45,12 @@ function Room:update(timing)
 end
 
 function Room:draw()
-  love.graphics.setBackgroundColor(unpack(self.backgroundColor))
+  love.graphics.setColor(unpack(self.backgroundColor))
+  love.graphics.rectangle(
+    "fill",
+    self.position.x, self.position.y, love.graphics.getWidth(), love.graphics.getHeight()
+  )
+  love.graphics.setColor(255,255,255)
   self.character:draw()
   for i, ennemy in pairs(self.ennemies) do
     ennemy:draw()

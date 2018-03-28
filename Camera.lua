@@ -13,6 +13,7 @@ function Camera:initialize(x, y)
   }
   love.graphics.push()
   love.graphics.translate(x, y)
+  self.translating = false
 end
 
 function Camera:scale()
@@ -20,32 +21,46 @@ function Camera:scale()
 end
 
 function Camera:setPosition(x, y)
+  self.translating = true
   self.nextPosition = {
     x = x,
     y = y
   }
 end
 
+function Camera:checkTranslating()
+  if self.nextPosition.x == nil and self.nextPosition.y == nil then
+    self.translating = false
+  end
+  return self.translating
+end
+
 function Camera:update()
   local step = 4
-  if math.abs(self.position.x - self.nextPosition.x) == step then
-    self.position.x = self.nextPosition.x
-  end
+  self:checkTranslating()
 
-  if math.abs(self.position.y - self.nextPosition.y) == step then
-    self.position.y = self.nextPosition.y
+  if self.nextPosition.x ~= nil then
+    if self.position.x > self.nextPosition.x then
+      self.position.x = self.position.x - step
+    else
+      self.position.x = self.position.x + step
+    end
+    if math.abs(self.position.x - self.nextPosition.x) == step then
+      self.position.x = self.nextPosition.x
+      self.nextPosition.x = nil
+    end
   end
+  if self.nextPosition.y ~= nil then
 
-  if self.position.x > self.nextPosition.x then
-    self.position.x = self.position.x - step
-  else
-    self.position.x = self.position.x + step
-  end
-
-  if self.position.y > self.nextPosition.y then
-    self.position.y = self.position.y - step
-  else
-    self.position.y = self.position.y + step
+    if self.position.y > self.nextPosition.y then
+      self.position.y = self.position.y - step
+    else
+      self.position.y = self.position.y + step
+    end
+    if math.abs(self.position.y - self.nextPosition.y) == step then
+      self.position.y = self.nextPosition.y
+      self.nextPosition.y = nil
+    end
   end
 end
 

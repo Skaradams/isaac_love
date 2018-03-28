@@ -3,8 +3,15 @@ local Room = require('Room')
 local dispatcher = require('dispatcher')
 
 local room
+local nextRoom
 
 
+function switchRoom()
+  if nextRoom and not camera.translating then
+    room = nextRoom
+    nextRoom = nil
+  end
+end
 
 function changeRoom(newRoom)
   camera:scale()
@@ -20,7 +27,7 @@ function changeRoom(newRoom)
 
 
   camera:setPosition(0,love.graphics.getHeight())
-  room = Room:new(roomData, function() print('change room 2') end, {65,43,21}, 2)
+  nextRoom = Room:new(roomData, function() print('change room 2') end, {65,43,21}, 2)
 end
 
 function love.load()
@@ -46,11 +53,18 @@ function love.update(timing)
   -- We'll use miliseconds everywhere
   timing = timing * 1000
   camera:update()
+  switchRoom()
   room:update(timing)
+  if nextRoom then
+    nextRoom:update(timing)
+  end
   dispatcher.update()
 end
 
 function love.draw()
   camera:draw()
   room:draw()
+  if nextRoom then
+    nextRoom:draw()
+  end
 end
